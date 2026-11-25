@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+         version="6.0">
+
+    <!-- ===== Parametres lus par le framework ===== -->
+    <context-param>
+        <param-name>nomPackage</param-name>
+        <param-value>mg.centre.controller</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>prefixVue</param-name>
+        <param-value>/WEB-INF/views/</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>suffixVue</param-name>
+        <param-value>.jsp</param-value>
+    </context-param>
+
+    <!-- Cle de session qui prouve que l'utilisateur est connecte -->
+    <context-param>
+        <param-name>sessionAuth</param-name>
+        <param-value>utilisateur</param-value>
+    </context-param>
+
+    <!-- Cle de session qui contient le role (MEDECIN / PATIENT) -->
+    <context-param>
+        <param-name>sessionRole</param-name>
+        <param-value>role</param-value>
+    </context-param>
+
+    <!-- ===== Listener du framework (OBLIGATOIRE) ===== -->
+    <listener>
+        <listener-class>mg.itu.listener.ApplicationListener</listener-class>
+    </listener>
+
+    <!-- ===== Front controller ===== -->
+    <servlet>
+        <servlet-name>front</servlet-name>
+        <servlet-class>mg.itu.FrontControllerServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>front</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+    <!-- ===== Securite des sessions ===== -->
+    <session-config>
+        <session-timeout>15</session-timeout>
+        <cookie-config>
+            <http-only>true</http-only>
+            <secure>false</secure>
+            <attribute>
+                <attribute-name>SameSite</attribute-name>
+                <attribute-value>Strict</attribute-value>
+            </attribute>
+        </cookie-config>
+        <tracking-mode>COOKIE</tracking-mode>
+    </session-config>
+</web-app>
