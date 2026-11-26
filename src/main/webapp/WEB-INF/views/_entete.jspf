@@ -1,0 +1,10 @@
+<%@ page contentType="text/html;charset=UTF-8" import="mg.centre.util.Html" %>
+<%
+    response.setHeader("X-Content-Type-Options", "nosniff");
+    response.setHeader("X-Frame-Options", "DENY");
+    response.setHeader("Referrer-Policy", "no-referrer");
+    response.setHeader("Cache-Control", "no-store");
+    response.setHeader("Content-Security-Policy",
+            "default-src 'self'; style-src 'self' 'unsafe-inline'; "
+          + "form-action 'self'; frame-ancestors 'none'; base-uri 'none'");
+%>
