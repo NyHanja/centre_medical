@@ -1,0 +1,10 @@
+<header>
+    <strong>Centre m&eacute;dical</strong>
+    <span>
+        <%= Html.e(request.getAttribute("login")) %> (<%= Html.e(request.getAttribute("role")) %>)
+        <form method="post" action="<%= request.getContextPath() %>/logout" style="display:inline">
+            <input type="hidden" name="csrf" value="<%= Html.e(request.getAttribute("csrf")) %>">
+            <button type="submit" style="margin:0 0 0 10px">D&eacute;connexion</button>
+        </form>
+    </span>
+</header>

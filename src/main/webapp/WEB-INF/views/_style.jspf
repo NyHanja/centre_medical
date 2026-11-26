@@ -1,0 +1,18 @@
+<style>
+    body    { font-family: sans-serif; background: #f4f6f8; margin: 0; color: #222; }
+    header  { background: #1e5a8a; color: #fff; padding: 10px 20px;
+              display: flex; justify-content: space-between; align-items: center; }
+    header form { margin: 0; }
+    main    { max-width: 900px; margin: 30px auto; background: #fff; padding: 25px;
+              border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,.1); }
+    main.etroit { max-width: 380px; }
+    label   { display: block; margin: 12px 0 4px; }
+    input, select, textarea { width: 100%; padding: 7px; box-sizing: border-box; }
+    button, .bouton { display: inline-block; padding: 8px 14px; margin-top: 12px; border: 0;
+              border-radius: 4px; background: #1e5a8a; color: #fff; text-decoration: none; cursor: pointer; }
+    .danger { background: #b3261e; }
+    .alerte { background: #fdecea; color: #b3261e; padding: 10px; border-radius: 4px; }
+    .succes { background: #e6f4ea; color: #1e6b34; padding: 10px; border-radius: 4px; }
+    table   { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    th, td  { padding: 8px; border-bottom: 1px solid #ddd; text-align: left; }
+</style>
