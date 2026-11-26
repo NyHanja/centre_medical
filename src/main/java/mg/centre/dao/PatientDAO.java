@@ -138,4 +138,15 @@ public class PatientDAO {
     private String echapperLike(String s) {
         return s.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_");
     }
+
+        /** Enregistre le chemin du QR code d'un patient (utilise par le programme QR code). */
+    public void updateQrCode(int id, String chemin) throws SQLException {
+        String sql = "UPDATE patient SET qrcode = ? WHERE id = ?";
+        try (Connection c = Connexion.ouvrir();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setString(1, chemin);
+            ps.setInt(2, id);
+            ps.executeUpdate();
+        }
+    }
 }

@@ -13,6 +13,7 @@
     <% if ("MEDECIN".equals(request.getAttribute("role"))) { %>
         <p>Vous &ecirc;tes connect&eacute; en tant que <strong>m&eacute;decin</strong>.</p>
         <a class="bouton" href="<%= request.getContextPath() %>/patients">G&eacute;rer les patients</a>
+        <a class="bouton" href="<%= request.getContextPath() %>/medecins">G&eacute;rer les m&eacute;decins</a>
     <% } else { %>
         <p>Vous &ecirc;tes connect&eacute; en tant que <strong>patient</strong>.</p>
         <a class="bouton" href="<%= request.getContextPath() %>/mon-dossier">Voir mon dossier</a>
