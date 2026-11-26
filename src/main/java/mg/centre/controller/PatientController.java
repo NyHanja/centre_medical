@@ -1,12 +1,15 @@
 package mg.centre.controller;
 
+import java.nio.file.Files;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.Base64;
 
 import mg.centre.dao.PatientDAO;
 import mg.centre.dao.UtilisateurDAO;
 import mg.centre.model.Patient;
 import mg.centre.model.Utilisateur;
+import mg.centre.qrcode.GenerateurQrCode;
 import mg.centre.util.Csrf;
 import mg.centre.util.MotDePasse;
 import mg.centre.util.Vue;
@@ -25,19 +28,14 @@ public class PatientController {
 
     private final PatientDAO patientDAO = new PatientDAO();
     private final UtilisateurDAO utilisateurDAO = new UtilisateurDAO();
+    private final GenerateurQrCode generateur = new GenerateurQrCode();
 
     // ---------- LISTE ----------
 
     @Auth(role = "MEDECIN")
     @UrlMapping(value = "/patients", method = "GET")
     public ModelAndView liste(Session session) {
-        try {
-            ModelAndView mv = page("patients", session);
-            mv.addAttribut("patients", patientDAO.findAll());
-            return mv;
-        } catch (SQLException e) {
-            return Vue.erreurTechnique(e);
-        }
+        return pageListe(session, null);
     }
 
     // ---------- CREATION ----------
@@ -88,6 +86,7 @@ public class PatientController {
             ModelAndView mv = page("patient-fiche", session);
             mv.addAttribut("patient", p);
             mv.addAttribut("loginCompte", (compte == null) ? null : compte.getLogin());
+            mv.addAttribut("qrcodeImage", lireImageQrCode(p));
             return mv;
         } catch (SQLException e) {
             return Vue.erreurTechnique(e);
@@ -159,6 +158,36 @@ public class PatientController {
         }
     }
 
+    // ---------- QR CODES ----------
+
+    /** Bouton de la fiche : genere le QR code d'UN patient. */
+    @Auth(role = "MEDECIN")
+    @UrlMapping(value = "/patients/qrcode", method = "POST")
+    public ModelAndView genererQrCode(@Param("id") String id) {
+        try {
+            Patient p = trouver(id);
+            if (p == null) {
+                return Vue.erreur("Patient introuvable.");
+            }
+            generateur.generer(p);
+            return Vue.redirection("/patients/fiche?id=" + p.getId());
+        } catch (Exception e) {
+            return Vue.erreurTechnique(e);
+        }
+    }
+
+    /** Bouton de la liste : genere TOUS les QR codes manquants. */
+    @Auth(role = "MEDECIN")
+    @UrlMapping(value = "/patients/qrcodes", method = "POST")
+    public ModelAndView genererTousLesQrCodes(Session session) {
+        try {
+            String resume = generateur.genererManquants();
+            return pageListe(session, resume);
+        } catch (SQLException e) {
+            return Vue.erreurTechnique(e);
+        }
+    }
+
     // ---------- COMPTE DU PATIENT ----------
 
     @Auth(role = "MEDECIN")
@@ -202,6 +231,31 @@ public class PatientController {
         mv.addAttribut("role", session.get("role"));
         mv.addAttribut("csrf", Csrf.jeton(session));
         return mv;
+    }
+
+    /** Page liste, avec un message facultatif (ex : resume des QR codes). */
+    private ModelAndView pageListe(Session session, String message) {
+        try {
+            ModelAndView mv = page("patients", session);
+            mv.addAttribut("patients", patientDAO.findAll());
+            mv.addAttribut("message", message);
+            return mv;
+        } catch (SQLException e) {
+            return Vue.erreurTechnique(e);
+        }
+    }
+
+    /** Lit l'image du QR code et la convertit en texte Base64 (pour l'afficher dans la page). */
+    private String lireImageQrCode(Patient p) {
+        if (!generateur.existe(p)) {
+            return null;
+        }
+        try {
+            byte[] octets = Files.readAllBytes(generateur.fichier(p.getId()));
+            return Base64.getEncoder().encodeToString(octets);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private ModelAndView formulaireAvecErreur(Session session, Patient p, String erreur) {

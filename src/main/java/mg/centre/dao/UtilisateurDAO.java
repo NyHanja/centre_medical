@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
+import java.util.List;
 
 import mg.centre.model.Utilisateur;
 import mg.centre.util.Connexion;
@@ -38,6 +40,20 @@ public class UtilisateurDAO {
                 return rs.next() ? lire(rs) : null;
             }
         }
+    }
+
+        /** @return tous les comptes MEDECIN, tries par login */
+    public List<Utilisateur> findMedecins() throws SQLException {
+        String sql = "SELECT " + COLONNES + " FROM utilisateur WHERE role = 'MEDECIN' ORDER BY login";
+        List<Utilisateur> liste = new ArrayList<>();
+        try (Connection c = Connexion.ouvrir();
+             PreparedStatement ps = c.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                liste.add(lire(rs));
+            }
+        }
+        return liste;
     }
 
     /** @return l'id genere. Le mot de passe de l'objet doit DEJA etre hache. */
